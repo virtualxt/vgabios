@@ -137,7 +137,7 @@ ASM_START
 .rom
 .org 0
 
-use16 386
+use16 186
 
 vgabios_start:
 .byte	0x55, 0xaa	/* BIOS signature, required for BIOS extensions */
