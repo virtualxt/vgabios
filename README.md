@@ -1,1 +1,1 @@
-Plex86/Bochs VGABios version 0.6c reconfigured for VirtualXT.
+Plex86/Bochs VGABios version 0.6c reconfigured for VirtualXT and other 8086 emulators.

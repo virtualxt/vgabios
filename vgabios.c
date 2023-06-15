@@ -137,7 +137,7 @@ ASM_START
 .rom
 .org 0
 
-use16 186
+use16 8086
 
 vgabios_start:
 .byte	0x55, 0xaa	/* BIOS signature, required for BIOS extensions */
@@ -282,11 +282,31 @@ vgabios_int10_handler:
 #ifdef DEBUG
   push es
   push ds
-  pusha
+
+  ;pusha
+  push ax
+  push cx
+  push dx
+  push bx
+  push sp ; Should be old SP. But think we are okey.
+  push bp
+  push si
+  push di
+
   mov   bx, #0xc000
   mov   ds, bx
   call _int10_debugmsg
-  popa
+
+  ;popa
+  pop di
+  pop si
+  pop bp
+  pop bx ; Should be old SP. Just discard it.
+  pop bx
+  pop dx
+  pop cx
+  pop ax
+
   pop ds
   pop es
 #endif
@@ -390,14 +410,32 @@ int10_test_vbe_0A:
 int10_normal:
   push es
   push ds
-  pusha
 
+  ;pusha
+  push ax
+  push cx
+  push dx
+  push bx
+  push sp ; Should be old SP. But think we are okey.
+  push bp
+  push si
+  push di
+  
 ;; We have to set ds to access the right data segment
   mov   bx, #0xc000
   mov   ds, bx
   call _int10_func
 
-  popa
+  ;popa
+  pop di
+  pop si
+  pop bp
+  pop bx ; Should be old SP. Just discard it.
+  pop bx
+  pop dx
+  pop cx
+  pop ax
+  
   pop ds
   pop es
 int10_end:
@@ -2229,7 +2267,12 @@ biosfn_toggle_intensity:
   in    al, dx
   and   al, #0xf7
   and   bl, #0x01
-  shl   bl, 3
+
+  ;shl   bl, 3
+  shl   bl, 1
+  shl   bl, 1
+  shl   bl, 1
+
   or    al, bl
   mov   dx, # VGAREG_ACTL_ADDRESS
   out   dx, al
@@ -2399,7 +2442,16 @@ biosfn_select_video_dac_color_page:
   and   bl, #0x01
   jnz   set_dac_page
   and   al, #0x7f
-  shl   bh, 7
+
+  ;shl   bh, 7
+  shl   bh, 1
+  shl   bh, 1
+  shl   bh, 1
+  shl   bh, 1
+  shl   bh, 1
+  shl   bh, 1
+  shl   bh, 1
+  
   or    al, bh
   mov   dx, # VGAREG_ACTL_ADDRESS
   out   dx, al
@@ -2414,7 +2466,11 @@ set_dac_page:
   pop   ax
   and   al, #0x80
   jnz   set_dac_16_page
-  shl   bh, 2
+
+  ;shl   bh, 2
+  shl   bh, 1
+  shl   bh, 1
+
 set_dac_16_page:
   and   bh, #0x0f
   mov   al, bh
@@ -2526,7 +2582,16 @@ biosfn_read_video_dac_state:
   mov   dx, # VGAREG_ACTL_READ_DATA
   in    al, dx
   mov   bl, al
-  shr   bl, 7
+  
+  ;shr   bl, 7
+  shr   bl, 1
+  shr   bl, 1
+  shr   bl, 1
+  shr   bl, 1
+  shr   bl, 1
+  shr   bl, 1
+  shr   bl, 1
+
   mov   dx, # VGAREG_ACTL_RESET
   in    al, dx
   mov   dx, # VGAREG_ACTL_ADDRESS
@@ -2538,7 +2603,11 @@ biosfn_read_video_dac_state:
   and   bh, #0x0f
   test  bl, #0x01
   jnz   get_dac_16_page
-  shr   bh, 2
+  
+  ;shr   bh, 2
+  shr   bh, 1
+  shr   bh, 1
+
 get_dac_16_page:
   mov   dx, # VGAREG_ACTL_RESET
   in    al, dx
@@ -2624,7 +2693,11 @@ ASM_START
  mov dx, # VGAREG_READ_MISC_OUTPUT
  in  al, dx
  and al, #0x01
- shl al, 2
+
+ ;shl al, 2
+ shl al, 1
+ shl al, 1
+
  or  al, #0x0a
  mov ah, al
  mov al, #0x06
@@ -2961,7 +3034,12 @@ biosfn_enable_default_palette_loading:
   push  dx
   mov   dl, al
   and   dl, #0x01
-  shl   dl, 3
+
+  ;shl   dl, 3
+  shl   dl, 1
+  shl   dl, 1
+  shl   dl, 1
+  
   mov   ax, # BIOSMEM_SEG
   mov   ds, ax
   mov   bx, # BIOSMEM_MODESET_CTL
