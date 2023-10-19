@@ -258,7 +258,7 @@ vgabios_init_func:
   int #0x10
 
 ;; show info
-  call _display_info
+  ;call _display_info
 
 #ifdef VBE  
 ;; show vbe info
